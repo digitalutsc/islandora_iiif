@@ -1,0 +1,6 @@
+{
+    "name": "islandora/islandora_iiif",
+    "type": "drupal-module",
+    "license": "GPL-3.0-or-later",
+    "require": {}
+}
