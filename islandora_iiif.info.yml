@@ -1,0 +1,7 @@
+name: 'Islandora IIIF'
+type: module
+description: 'IIIF support for Islandora'
+core_version_requirement: ^9 || ^10
+package: Islandora
+dependencies:
+  - islandora_lite:termwithuri_condition
