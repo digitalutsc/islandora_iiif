@@ -428,6 +428,9 @@ class IIIFManifest extends StylePluginBase {
     }
     elseif ($structured_text_term = $this->getStructuredTextTerm()) {
       $parent_node = $this->getParentNode($entity, $id);
+      if(is_null($parent_node)) {
+        return false;
+      }
       $ocr_entity_array = Utils::getMediaReferencingNodeAndTerm($parent_node, $structured_text_term);
       $ocr_entity_id = is_array($ocr_entity_array) ? array_shift($ocr_entity_array) : NULL;
       $ocr_entity = $ocr_entity_id ? $this->entityTypeManager->getStorage('media')->load($ocr_entity_id) : NULL;
