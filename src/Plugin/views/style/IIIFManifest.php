@@ -369,7 +369,19 @@ class IIIFManifest extends StylePluginBase {
     }
 
     try {
-      $info_json = $this->httpClient->get($iiif_url)->getBody();
+      // For dsu-utsc.
+      if (!empty(\Drupal::hasService('jwt.authentication.jwt'))) {
+        $jwtService = \Drupal::service('jwt.authentication.jwt');
+        $token = $jwtService->generateToken();
+        $info_json = $this->httpClient->get($iiif_url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token
+            ]
+        ])->getBody();
+      }
+      else {
+        $info_json = $this->httpClient->get($iiif_url)->getBody();
+      }
       $resource = json_decode($info_json, TRUE);
       $width = $resource['width'];
       $height = $resource['height'];
