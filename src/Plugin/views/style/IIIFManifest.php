@@ -440,6 +440,12 @@ class IIIFManifest extends StylePluginBase {
     }
     elseif ($structured_text_term = $this->getStructuredTextTerm()) {
       $parent_node = $this->getParentNode($entity, $id);
+      
+      // For items without parent node, return their id as the parent node
+      // This is the case for images with ocr, have not tested this case fully though!      
+      if ($parent_node == NULL) {        
+        return $parent_node;
+      }      
       $ocr_entity_array = Utils::getMediaReferencingNodeAndTerm($parent_node, $structured_text_term);
       $ocr_entity_id = is_array($ocr_entity_array) ? array_shift($ocr_entity_array) : NULL;
       $ocr_entity = $ocr_entity_id ? $this->entityTypeManager->getStorage('media')->load($ocr_entity_id) : NULL;
