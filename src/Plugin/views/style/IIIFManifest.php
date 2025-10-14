@@ -178,6 +178,7 @@ class IIIFManifest extends StylePluginBase {
     if (!is_null($iiif_address) && !empty($iiif_address)) {
       // Get the current URL being requested.
       $request_host = $this->request->getSchemeAndHttpHost();
+      $request_host = str_replace('http://', 'https://', $request_host);
       $request_url = $this->request->getRequestUri();
       // Strip off the last URI component to get the base ID of the URL.
       // @todo assumming the view is a path like /node/1/manifest.json
@@ -325,6 +326,7 @@ class IIIFManifest extends StylePluginBase {
           }
 
           if ($ocr_url = $this->getOcrUrl($entity, $node_id)) {
+            $ocr_url = str_replace('http://', 'https://', $ocr_url);
             $tmp_canvas['seeAlso'] = [
               '@id' => $ocr_url,
               'format' => 'text/vnd.hocr+html',
@@ -551,7 +553,8 @@ class IIIFManifest extends StylePluginBase {
       $hocr_search_url = $url_base . '/' . ltrim($hocr_search_path, '/');
 
       $hocr_search_url = str_replace('%node', $url_components[1], $hocr_search_url);
-
+      $hocr_search_url = str_replace('http://', 'https://', $hocr_search_url);
+      
       $json['service'][] = [
         "@context" => "http://iiif.io/api/search/0/context.json",
         "@id" => $hocr_search_url,
