@@ -198,11 +198,34 @@ class IIIFManifest extends StylePluginBase {
 
         case 'node':
           $label = $this->getEntityTitle($content_path);
-
           break;
 
         default:
           $label = $this->t("IIIF Manifest");
+      }
+
+      $url_parts = explode('/', trim($request_url, '/'));
+      $node_id = end($url_parts);
+      if (!is_numeric($node_id)) {
+        $node_id = end($url_components);
+      }
+
+      $metadata = [];
+      if ($node_id && is_numeric($node_id)) {
+        $node = $this->entityTypeManager->getStorage('node')->load($node_id);
+        if ($node) {
+          $metadata[] = [
+            'label' => 'Title',
+            'value' => $node->getTitle(),
+          ];
+          if ($node->hasField('field_rights') && !$node->get('field_rights')->isEmpty()) {
+            $rights_value = $node->get('field_rights')->entity ? $node->get('field_rights')->entity->label() : $node->get('field_rights')->getString();
+            $metadata[] = [
+              'label' => 'Rights Statement',
+              'value' => $rights_value,
+            ];
+          }
+        }
       }
 
       // @see https://iiif.io/api/presentation/2.1/#manifest
@@ -211,6 +234,7 @@ class IIIFManifest extends StylePluginBase {
         '@id' => $request_url,
         // If the View has a title, set the View title as the manifest label.
         'label' => $label,
+        'metadata' => $metadata,
         '@context' => 'http://iiif.io/api/presentation/2/context.json',
         // @see https://iiif.io/api/presentation/2.1/#sequence
         'sequences' => [
