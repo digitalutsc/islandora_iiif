@@ -290,6 +290,7 @@ class IIIFManifest extends StylePluginBase {
       if (isset($entity->{$viewsField->definition['field_name']})) {
         /** @var \Drupal\Core\Field\FieldItemListInterface $images */
         $images = $entity->{$viewsField->definition['field_name']};
+        // phpcs:ignore -- Unused variable $i.
         foreach ($images as $i => $image) {
           if (!$image->entity->access('view')) {
             // If the user does not have permission to view the file, skip it.
@@ -344,7 +345,7 @@ class IIIFManifest extends StylePluginBase {
             ],
           ];
 
-          $node_id = null;
+          $node_id = NULL;
           if (preg_match('/\/node\/(\d+)/', $iiif_base_id, $matches)) {
             $node_id = $matches[1];
           }
@@ -400,9 +401,9 @@ class IIIFManifest extends StylePluginBase {
         $jwtService = \Drupal::service('jwt.authentication.jwt');
         $token = $jwtService->generateToken();
         $info_json = $this->httpClient->get($iiif_url, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token
-            ]
+          'headers' => [
+            'Authorization' => 'Bearer ' . $token,
+          ],
         ])->getBody();
       }
       else {
@@ -418,8 +419,8 @@ class IIIFManifest extends StylePluginBase {
       if (empty($width) || empty($height)) {
         // Get the image properties so we know the image width/height.
         $properties = $image->getProperties();
-        $width = isset($properties['width']) ? $properties['width'] : 0;
-        $height = isset($properties['height']) ? $properties['height'] : 0;
+        $width = $properties['width'] ?? 0;
+        $height = $properties['height'] ?? 0;
 
         // If this is a TIFF AND we don't know the width/height
         // see if we can get the image size via PHP's core function.
@@ -466,12 +467,13 @@ class IIIFManifest extends StylePluginBase {
     }
     elseif ($structured_text_term = $this->getStructuredTextTerm()) {
       $parent_node = $this->getParentNode($entity, $id);
-      
+
       // For items without parent node, return their id as the parent node
-      // This is the case for images with ocr, have not tested this case fully though!      
-      if ($parent_node == NULL) {        
+      // This is the case for images with ocr,
+      // Have not tested this case fully though!
+      if ($parent_node == NULL) {
         return $parent_node;
-      }      
+      }
       $ocr_entity_array = Utils::getMediaReferencingNodeAndTerm($parent_node, $structured_text_term);
       $ocr_entity_id = is_array($ocr_entity_array) ? array_shift($ocr_entity_array) : NULL;
       $ocr_entity = $ocr_entity_id ? $this->entityTypeManager->getStorage('media')->load($ocr_entity_id) : NULL;
@@ -489,10 +491,14 @@ class IIIFManifest extends StylePluginBase {
   /**
    * Gets nodes that a media belongs to.
    *
+   * // phpcs:ignore -- Doc comment for parameter $media does not match actual variable name $id
    * @param \Drupal\media\MediaInterface $media
    *   The Media whose node you are searching for.
    * @param int $id
    *   The ID of the book node.
+   * // phpcs:ignore -- Doc comment for parameter $entity does not match actual variable name <undefined>
+   * @param EntityInterface $entity
+   *   The entity.
    *
    * @return \Drupal\node\NodeInterface
    *   Parent node.
@@ -520,7 +526,7 @@ class IIIFManifest extends StylePluginBase {
     }
     return NULL;
   }
-  
+
   /**
    * Pull a title from the node or media passed to this view.
    *
@@ -578,11 +584,12 @@ class IIIFManifest extends StylePluginBase {
 
       $hocr_search_url = str_replace('%node', $url_components[1], $hocr_search_url);
       $hocr_search_url = str_replace('http://', 'https://', $hocr_search_url);
-      
+
       $json['service'][] = [
         "@context" => "http://iiif.io/api/search/0/context.json",
         "@id" => $hocr_search_url,
         "profile" => "http://iiif.io/api/search/0/search",
+        // phpcs:ignore -- t() calls should be avoided in classes, use \Drupal\Core\StringTranslation\StringTranslationTrait and $this->t() instead
         "label" => t("Search inside this work"),
       ];
     }
@@ -687,7 +694,12 @@ class IIIFManifest extends StylePluginBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state object.
    */
-  // @codingStandardsIgnoreStart
+
+  /**
+   * Submit handler for options form.
+   *
+   * @codingStandardsIgnoreStart
+   */
   public function submitOptionsForm(&$form, FormStateInterface $form_state) {
     // @codingStandardsIgnoreEnd
     $style_options = $form_state->getValue('style_options');
