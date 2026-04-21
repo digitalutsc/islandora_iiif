@@ -290,8 +290,7 @@ class IIIFManifest extends StylePluginBase {
       if (isset($entity->{$viewsField->definition['field_name']})) {
         /** @var \Drupal\Core\Field\FieldItemListInterface $images */
         $images = $entity->{$viewsField->definition['field_name']};
-        // phpcs:ignore -- Unused variable $i.
-        foreach ($images as $i => $image) {
+        foreach ($images as $image) {
           if (!$image->entity->access('view')) {
             // If the user does not have permission to view the file, skip it.
             continue;
@@ -491,14 +490,10 @@ class IIIFManifest extends StylePluginBase {
   /**
    * Gets nodes that a media belongs to.
    *
-   * // phpcs:ignore -- Doc comment for parameter $media does not match actual variable name $id
-   * @param \Drupal\media\MediaInterface $media
-   *   The Media whose node you are searching for.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
    * @param int $id
    *   The ID of the book node.
-   * // phpcs:ignore -- Doc comment for parameter $entity does not match actual variable name <undefined>
-   * @param EntityInterface $entity
-   *   The entity.
    *
    * @return \Drupal\node\NodeInterface
    *   Parent node.
